@@ -1,0 +1,204 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>6 meses · D</title>
+<style>
+  * { margin:0; padding:0; box-sizing:border-box; }
+  body {
+    background: radial-gradient(ellipse at 50% 40%, #1b1440 0%, #0a0820 45%, #03030d 100%);
+    color:#e6dcff; font-family: 'Segoe UI', system-ui, sans-serif;
+    overflow-x:hidden; min-height:100vh;
+  }
+  #stars { position:fixed; inset:0; z-index:0; }
+  canvas#heart { position:fixed; inset:0; z-index:1; }
+  .ui { position:relative; z-index:2; display:flex; flex-direction:column;
+        align-items:center; justify-content:flex-end; min-height:100vh; padding:24px; gap:18px; }
+  h1 { font-weight:300; letter-spacing:.35em; text-transform:uppercase;
+       font-size:clamp(12px,2vw,16px); color:#c9b8ff; text-shadow:0 0 20px #8a5cff; }
+  .spotify { width:min(420px,92vw); border-radius:14px; overflow:hidden;
+             box-shadow:0 0 40px rgba(138,92,255,.35); }
+  .btn {
+    padding:14px 34px; border-radius:999px; border:1px solid rgba(200,170,255,.6);
+    background:linear-gradient(135deg, rgba(120,80,255,.35), rgba(80,140,255,.25));
+    color:#f2ebff; font-size:15px; letter-spacing:.08em; cursor:pointer;
+    backdrop-filter:blur(8px); transition:.3s; box-shadow:0 0 25px rgba(120,90,255,.4);
+  }
+  .btn:hover { transform:translateY(-2px); box-shadow:0 0 40px rgba(160,120,255,.8); }
+  .modal {
+    position:fixed; inset:0; z-index:10; display:none; align-items:center; justify-content:center;
+    background:rgba(5,3,20,.82); backdrop-filter:blur(10px); padding:20px;
+  }
+  .modal.open { display:flex; }
+  .card {
+    max-width:620px; width:100%; max-height:85vh; overflow-y:auto;
+    padding:38px 32px; border-radius:22px; line-height:1.85; font-size:17px;
+    background:linear-gradient(160deg, rgba(60,40,120,.75), rgba(20,15,50,.9));
+    border:1px solid rgba(180,150,255,.35);
+    box-shadow:0 0 80px rgba(130,90,255,.45); animation:pop .5s ease;
+  }
+  @keyframes pop { from { transform:scale(.9); opacity:0 } to { transform:scale(1); opacity:1 } }
+  .card p { white-space:pre-line; }
+  .close { margin-top:22px; font-size:13px; opacity:.7; cursor:pointer;
+           background:none; border:none; color:#d9ccff; }
+</style>
+</head>
+<body>
+<canvas id="stars"></canvas>
+<canvas id="heart"></canvas>
+
+<div class="ui">
+  <h1>Seis meses · D</h1>
+  <div class="spotify">
+    <iframe style="border-radius:14px" src="https://open.spotify.com/embed/track/2VXMHE0SHEG4ZBLY6s6eYJ?utm_source=generator&theme=0"
+      width="100%" height="152" frameborder="0" allow="autoplay; clipboard-write; encrypted-media; fullscreen; picture-in-picture" loading="lazy"></iframe>
+  </div>
+  <button class="btn" id="openSecret">Mensaje secreto ✦</button>
+</div>
+
+<div class="modal" id="modal">
+  <div class="card">
+    <p id="secretText"></p>
+    <button class="close" id="closeSecret">cerrar ✦</button>
+  </div>
+</div>
+
+<script>
+/* ---------- MENSAJE SECRETO ---------- */
+const SECRET = "Gracias mi amor por estos 6 meses que hemos pasado juntos, hemos pasado mucho juntos y agradezco cada unos de esos momentos, espero podamos seguir compartiendo muchos mas, ojala nunca te canses de mi y si te cansas duermes un rato para recuperar fuerzas por que yo no me voy a alejar de ti amorcito. Te amo con toda mi alma, porque el alma nunca muere amorcito y con el corazón se queda corto";
+document.getElementById('secretText').textContent = SECRET;
+const modal = document.getElementById('modal');
+document.getElementById('openSecret').onclick = () => modal.classList.add('open');
+document.getElementById('closeSecret').onclick = () => modal.classList.remove('open');
+modal.onclick = e => { if (e.target === modal) modal.classList.remove('open'); };
+
+/* ---------- ESTRELLAS ---------- */
+const starCv = document.getElementById('stars'), sctx = starCv.getContext('2d');
+let stars = [];
+function initStars() {
+  starCv.width = innerWidth; starCv.height = innerHeight;
+  stars = Array.from({length: 260}, () => ({
+    x: Math.random()*innerWidth, y: Math.random()*innerHeight,
+    r: Math.random()*1.4 + .3, a: Math.random(), s: Math.random()*.015 + .004
+  }));
+}
+addEventListener('resize', () => { initStars(); resizeHeart(); });
+initStars();
+(function twinkle() {
+  sctx.clearRect(0,0,starCv.width,starCv.height);
+  for (const st of stars) {
+    st.a += st.s; const al = .35 + Math.abs(Math.sin(st.a))*.65;
+    sctx.beginPath(); sctx.arc(st.x, st.y, st.r, 0, 7);
+    sctx.fillStyle = `rgba(210,200,255,${al})`; sctx.fill();
+  }
+  requestAnimationFrame(twinkle);
+})();
+
+/* ---------- CORAZÓN 3D DE PALABRAS ---------- */
+const cv = document.getElementById('heart'), ctx = cv.getContext('2d');
+let W, H, DPR = Math.min(devicePixelRatio || 1, 2);
+function resizeHeart() {
+  W = cv.width = innerWidth * DPR;
+  H = cv.height = innerHeight * DPR;
+  cv.style.width = innerWidth + 'px';
+  cv.style.height = innerHeight + 'px';
+}
+resizeHeart();
+
+const WORDS = ['te amo','amor','siempre','mi vida','D','juntos','corazón','besos','tú y yo',
+  'mi cielo','6 meses','abrazo','feliz','mi amor','te quiero','para siempre','mi persona',
+  'gracias','luz','estrella','mi hogar','contigo','nuestro','eterno','mi todo','dulce',
+  'risas','compañía','mi lugar','te extraño','mi sol','sueños','cariño','mi paz','tú','yo','nosotros'];
+
+// Superficie del corazón: x = 16 sin³t, y = 13cos t − 5cos2t − 2cos3t − cos4t
+function heartPoint(t) {
+  return {
+    x: 16 * Math.pow(Math.sin(t), 3),
+    y: -(13*Math.cos(t) - 5*Math.cos(2*t) - 2*Math.cos(3*t) - Math.cos(4*t))
+  };
+}
+
+// Genera palabras distribuidas en TODO el interior del corazón
+const particles = [];
+(function build() {
+  const N = 620; let tries = 0;
+  while (particles.length < N && tries < 40000) {
+    tries++;
+    const t = Math.random() * Math.PI * 2;
+    const p = heartPoint(t);
+    const r = Math.sqrt(Math.random());          // relleno uniforme hacia el centro
+    const x = p.x * r, y = p.y * r;
+    // profundidad: capa trasera y delantera, MUY poca (volumen sutil)
+    const z = (Math.random() - .5) * 2.2;
+    particles.push({
+      x, y, z,
+      word: WORDS[Math.floor(Math.random()*WORDS.length)],
+      size: 8 + Math.random()*4,
+      bright: Math.random()
+    });
+  }
+})();
+
+const PALETTE = ['#c9b6ff','#9d7bff','#7fb2ff','#e3d6ff','#b48cff','#8fd0ff','#ffffff'];
+
+let rot = 0, beat = 0, last = performance.now();
+
+function draw(now) {
+  const dt = (now - last) / 1000; last = now;
+  rot += dt * 0.35;                                   // rotación suave
+  beat = (Math.sin(now / 520) * .5 + .5);             // latido
+
+  ctx.clearRect(0, 0, W, H);
+  const scale = Math.min(W, H) / 44 * (1 + beat * 0.035);  // escala + pulso
+  const cx = W / 2, cy = H / 2;
+  const cos = Math.cos(rot), sin = Math.sin(rot);
+
+  // ordenar por profundidad (atrás primero)
+  const list = particles.map(p => {
+    const xr = p.x * cos - p.z * sin;
+    const zr = p.x * sin + p.z * cos;
+    return { ...p, xr, zr };
+  }).sort((a, b) => a.zr - b.zr);
+
+  ctx.textAlign = 'center';
+  ctx.textBaseline = 'middle';
+
+  for (const p of list) {
+    const depth = (p.zr + 1.1) / 2.2;                 // 0 atrás → 1 delante
+    const persp = 0.92 + depth * 0.16;                // ligera perspectiva, sin estirar
+    const sx = cx + p.xr * scale * persp;
+    const sy = cy + p.y * scale * persp;
+    const size = p.size * DPR * (0.85 + depth * 0.3);
+    const alpha = 0.25 + depth * 0.75;
+
+    // "volumen": copia oscura detrás, desplazada 1px (extrusión mínima)
+    ctx.font = `600 ${size}px 'Segoe UI', system-ui, sans-serif`;
+    ctx.fillStyle = `rgba(40,20,90,${alpha * .55})`;
+    ctx.fillText(p.word, sx + 0.8*DPR, sy + 0.8*DPR);
+
+    const color = PALETTE[Math.floor(p.bright * PALETTE.length)];
+    ctx.fillStyle = color;
+    ctx.globalAlpha = alpha;
+    ctx.shadowColor = color;
+    ctx.shadowBlur = 8 * DPR * depth;
+    ctx.fillText(p.word, sx, sy);
+    ctx.globalAlpha = 1;
+    ctx.shadowBlur = 0;
+  }
+
+  // La D grande en el centro
+  const dSize = scale * 3.4 * (1 + beat * 0.06);
+  ctx.font = `700 ${dSize}px 'Segoe UI', system-ui, sans-serif`;
+  ctx.shadowColor = '#a98bff';
+  ctx.shadowBlur = 40 * DPR;
+  ctx.fillStyle = 'rgba(255,255,255,.95)';
+  ctx.fillText('D', cx, cy);
+  ctx.shadowBlur = 0;
+
+  requestAnimationFrame(draw);
+}
+requestAnimationFrame(draw);
+</script>
+</body>
+</html>
